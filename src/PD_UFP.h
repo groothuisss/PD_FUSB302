@@ -62,7 +62,8 @@ class PD_UFP_core_c
     public:
         PD_UFP_core_c();
         // Init
-        void init(enum PD_power_option_t power_option = PD_POWER_OPTION_MAX_5V);
+        // void init(enum PD_power_option_t power_option = PD_POWER_OPTION_MAX_5V);
+        void init(enum PD_power_option_t power_option = PD_POWER_OPTION_MAX_5V, uint8_t pin = 34);
         void init_PPS(uint16_t PPS_voltage, uint8_t PPS_current, enum PD_power_option_t power_option = PD_POWER_OPTION_MAX_5V);
         // Task
         void run(void);
@@ -90,6 +91,7 @@ class PD_UFP_core_c
         // Device
         FUSB302_dev_t FUSB302;
         PD_protocol_t protocol;
+        uint8_t PIN_FUSB302_INT;
         // Power ready power
         uint16_t ready_voltage;
         uint16_t ready_current;
@@ -155,51 +157,51 @@ class PD_UFP_c : public PD_UFP_core_c
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Optional: PD_UFP_log_c, extended from PD_UFP_c to provide logging function.
-//           Asynchronous, minimal impact on PD timing.
-///////////////////////////////////////////////////////////////////////////////////////////////////
-struct status_log_t {
-    uint16_t time;
-    uint16_t msg_header;
-    uint8_t obj_count;
-    uint8_t status;
-};
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
+// // Optional: PD_UFP_log_c, extended from PD_UFP_c to provide logging function.
+// //           Asynchronous, minimal impact on PD timing.
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
+// struct status_log_t {
+//     uint16_t time;
+//     uint16_t msg_header;
+//     uint8_t obj_count;
+//     uint8_t status;
+// };
 
-enum pd_log_level_t {
-    PD_LOG_LEVEL_INFO,
-    PD_LOG_LEVEL_VERBOSE
-};
+// enum pd_log_level_t {
+//     PD_LOG_LEVEL_INFO,
+//     PD_LOG_LEVEL_VERBOSE
+// };
 
-class PD_UFP_log_c : public PD_UFP_c
-{
-    public:
-        PD_UFP_log_c(pd_log_level_t log_level = PD_LOG_LEVEL_INFO);
-        // Task
-        void print_status(Serial_ & serial);
-        void print_status(HardwareSerial & serial);
-        // Get
-        int status_log_readline(char * buffer, int maxlen);
+// class PD_UFP_log_c : public PD_UFP_c
+// {
+//     public:
+//         PD_UFP_log_c(pd_log_level_t log_level = PD_LOG_LEVEL_INFO);
+//         // Task
+//         void print_status(Serial_ & serial);
+//         void print_status(HardwareSerial & serial);
+//         // Get
+//         int status_log_readline(char * buffer, int maxlen);
 
-    protected:
-        int status_log_readline_msg(char * buffer, int maxlen, status_log_t * log);
-        int status_log_readline_src_cap(char * buffer, int maxlen);
-        // Status log functions
-        uint8_t status_log_obj_add(uint16_t header, uint32_t * obj);
-        virtual void status_log_event(uint8_t status, uint32_t * obj);
-        // status log event queue
-        status_log_t status_log[16];    // array size must be power of 2 and <=256
-        uint8_t status_log_read;
-        uint8_t status_log_write;
-        // status log object queue
-        uint32_t status_log_obj[16];    // array size must be power of 2 and <=256
-        uint8_t status_log_obj_read;
-        uint8_t status_log_obj_write;
-        // state variables
-        pd_log_level_t status_log_level;
-        uint8_t status_log_counter;        
-        char status_log_time[8];
-};
+//     protected:
+//         int status_log_readline_msg(char * buffer, int maxlen, status_log_t * log);
+//         int status_log_readline_src_cap(char * buffer, int maxlen);
+//         // Status log functions
+//         uint8_t status_log_obj_add(uint16_t header, uint32_t * obj);
+//         virtual void status_log_event(uint8_t status, uint32_t * obj);
+//         // status log event queue
+//         status_log_t status_log[16];    // array size must be power of 2 and <=256
+//         uint8_t status_log_read;
+//         uint8_t status_log_write;
+//         // status log object queue
+//         uint32_t status_log_obj[16];    // array size must be power of 2 and <=256
+//         uint8_t status_log_obj_read;
+//         uint8_t status_log_obj_write;
+//         // state variables
+//         pd_log_level_t status_log_level;
+//         uint8_t status_log_counter;        
+//         char status_log_time[8];
+// };
 
 #endif
 
